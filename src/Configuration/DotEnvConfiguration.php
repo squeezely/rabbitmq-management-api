@@ -1,7 +1,7 @@
 <?php
 
 
-namespace SqueezelyRabbitMQManagement\Configuration;
+namespace Squeezely\RabbitMQ\Management\Configuration;
 
 
 class DotEnvConfiguration implements ConfigurationInterface {
