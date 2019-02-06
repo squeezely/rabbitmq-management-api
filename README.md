@@ -23,10 +23,10 @@ How to use:
 ====
 ```php
 <?php
-use RabbitMQManagement\Configuration\AbstractConfiguration;
-use RabbitMQManagement\Configuration\ArrayConfiguration;
-use RabbitMQManagement\Vhost\VhostService;
-use RabbitMQManagement\Cluster\ClusterService;
+use SqueezelyRabbitMQManagement\Configuration\AbstractConfiguration;
+use SqueezelyRabbitMQManagement\Configuration\ArrayConfiguration;
+use SqueezelyRabbitMQManagement\Vhost\VhostService;
+use SqueezelyRabbitMQManagement\Cluster\ClusterService;
 
 
 $config = new AbstractConfiguration('my.host.com', 15672, 'http', 'user', 'password');

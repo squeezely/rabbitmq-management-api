@@ -1,12 +1,12 @@
 <?php
 
 
-namespace RabbitMQManagement;
+namespace SqueezelyRabbitMQManagement;
 
 
 use GuzzleHttp\Client as HttpClient;
-use RabbitMQManagement\Configuration\ConfigurationInterface;
-use RabbitMQManagement\Configuration\DotEnvConfiguration;
+use SqueezelyRabbitMQManagement\Configuration\ConfigurationInterface;
+use SqueezelyRabbitMQManagement\Configuration\DotEnvConfiguration;
 
 class Client {
 
