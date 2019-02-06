@@ -1,12 +1,12 @@
 <?php
 
 
-namespace SqueezelyRabbitMQManagement\Vhost;
+namespace Squeezely\RabbitMQ\Management\Vhost;
 
 
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Psr7\Response;
-use SqueezelyRabbitMQManagement\Client;
+use Squeezely\RabbitMQ\Management\Client;
 
 class VhostService extends Client {
 

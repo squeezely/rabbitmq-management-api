@@ -1,9 +1,9 @@
 <?php
 
 
-namespace SqueezelyRabbitMQManagement\Cluster;
+namespace Squeezely\RabbitMQ\Management\Cluster;
 
-use SqueezelyRabbitMQManagement\Client;
+use Squeezely\RabbitMQ\Management\Client;
 
 class ClusterService extends Client {
     /**
