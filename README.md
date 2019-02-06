@@ -2,7 +2,7 @@
 
 Requirements
 ====
-- PHP >= 7.0
+- PHP >= 7.2
 - [php guzzle/guzzle](https://github.com/guzzle/guzzle)
 
 Installation
@@ -23,10 +23,10 @@ How to use:
 ====
 ```php
 <?php
-use SqueezelyRabbitMQManagement\Configuration\AbstractConfiguration;
-use SqueezelyRabbitMQManagement\Configuration\ArrayConfiguration;
-use SqueezelyRabbitMQManagement\Vhost\VhostService;
-use SqueezelyRabbitMQManagement\Cluster\ClusterService;
+use Squeezely\RabbitMQ\Management\Configuration\AbstractConfiguration;
+use Squeezely\RabbitMQ\Management\Configuration\ArrayConfiguration;
+use Squeezely\RabbitMQ\Management\Vhost\VhostService;
+use Squeezely\RabbitMQ\Management\Cluster\ClusterService;
 
 
 $config = new AbstractConfiguration('my.host.com', 15672, 'http', 'user', 'password');

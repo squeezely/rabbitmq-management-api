@@ -8,7 +8,7 @@
     },
     "autoload": {
         "psr-4" : {
-            "SquuezelyRabbitMQManagement\\": "src"
+            "Squeezely\\RabbitMQ\\Management\\": "src"
         }
     },
     "license": "MIT",
