@@ -1,7 +1,7 @@
 <?php
 
 
-namespace RabbitMQManagement\Vhost;
+namespace SqueezelyRabbitMQManagement\Vhost;
 
 class Vhost {
 
