@@ -10,9 +10,6 @@ use Squeezely\RabbitMQ\Management\Client;
 
 class VhostService extends Client {
 
-    /** @var Vhost[]  */
-    private $vhosts = [];
-
     /**
      * @param string $name
      *
@@ -21,9 +18,7 @@ class VhostService extends Client {
      * @return Vhost|false
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function getVhost(string $name, bool $refetch = false) {
-        if(isset($this->vhosts[$name]) && $refetch === false) return $this->vhosts[$name];
-
+    public function getVhost(string $name) {
         try {
             $vhostGeneralData = $this->sendAuthenticatedRequest('vhosts/' . $name);
         } catch(GuzzleException $e) {
@@ -39,21 +34,17 @@ class VhostService extends Client {
     }
 
     /**
-     * @param bool $refetch
      *
      * @return Vhost[]
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function getVhosts(bool $refetch = false) {
-        if($refetch) $this->vhosts = [];
-
+    public function getVhosts() {
+        $vHosts = [];
         foreach($this->sendAuthenticatedRequest('vhosts') as $vhost) {
-            if(!isset($this->vhosts[$vhost['name']])) {
-                $this->vhosts[$vhost['name']] = new Vhost($vhost, $this->getVhostPermissions($vhost['name']), $this->getVhostTopicPermissions($vhost['name']));
-            }
+                $vHosts[] = new Vhost($vhost, $this->getVhostPermissions($vhost['name']), $this->getVhostTopicPermissions($vhost['name']));
         }
 
-        return $this->vhosts;
+        return $vHosts;
     }
 
     /**
@@ -75,7 +66,6 @@ class VhostService extends Client {
         /** @var Response $res */
         $res = $this->sendAuthenticatedRequest('vhosts/' . $name, 'PUT', $body, false);
         if($res->getStatusCode() == 201 || $res->getStatusCode() == 204) {
-            echo '"' . $res->getBody() . '"' . PHP_EOL;
             return true;
         }
 
