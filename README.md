@@ -62,6 +62,10 @@ var_dump(
 
 ```
 
+Contribution and Feature requests
+====
+If more features are required for you to make this work feel free to create an issue within this project. For contribution a pull request can be opened, please stay in the same coding standard line as this is coded.
+
 License
 ====
 
