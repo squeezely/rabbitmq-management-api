@@ -5,8 +5,9 @@ namespace Squeezely\RabbitMQ\Management\Vhost;
 
 
 use GuzzleHttp\Exception\GuzzleException;
-use GuzzleHttp\Psr7\Response;
+use Psr\Http\Message\ResponseInterface;
 use Squeezely\RabbitMQ\Management\Client;
+use Squeezely\RabbitMQ\Management\Response;
 
 class VhostService extends Client {
 
@@ -63,9 +64,9 @@ class VhostService extends Client {
             $body = ['tracing' => true];
         }
 
-        /** @var Response $res */
+        /** @var ResponseInterface $res */
         $res = $this->sendAuthenticatedRequest('vhosts/' . $name, 'PUT', $body, false);
-        if($res->getStatusCode() == 201 || $res->getStatusCode() == 204) {
+        if($res->getStatusCode() == Response::HTTP_CREATED || $res->getStatusCode() == Response::HTTP_NO_CONTENT) {
             return true;
         }
 

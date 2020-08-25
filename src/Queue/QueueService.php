@@ -4,9 +4,11 @@
 namespace Squeezely\RabbitMQ\Management\Queue;
 
 
+use Exception;
 use GuzzleHttp\Exception\GuzzleException;
-use GuzzleHttp\Psr7\Response;
+use Psr\Http\Message\ResponseInterface;
 use Squeezely\RabbitMQ\Management\Client;
+use Squeezely\RabbitMQ\Management\Response;
 
 class QueueService extends Client {
 
@@ -15,7 +17,7 @@ class QueueService extends Client {
      * @param string $vhost
      *
      * @return Queue|false
-     * @throws \Exception
+     * @throws Exception
      */
     public function getQueue(string $name, string $vhost) {
         try {
@@ -25,8 +27,7 @@ class QueueService extends Client {
         }
 
         if(isset($vhostGeneralData['name']) && $vhostGeneralData['name'] == $name) {
-            $queue = new Queue($vhostGeneralData, $this->getVhostPermissions($name), $this->getVhostTopicPermissions($name));
-            return $queue;
+            return new Queue($vhostGeneralData);
         }
 
         return false;
@@ -61,25 +62,33 @@ class QueueService extends Client {
      *
      * @param string $name
      * @param string $vHost
-     * @param array $additionConfig
+     * @param array  $additionConfig
+     *
      * @return bool
      * @throws GuzzleException
      */
     public function createQueue(string $name, string $vHost, array $additionConfig = []) {
-        /** @var Response $res */
-        $res = $this->sendAuthenticatedRequest('queues/' . '/' . $vHost . '/' . $name, 'PUT', $additionConfig, false);
-        if($res->getStatusCode() == 201 || $res->getStatusCode() == 204) {
+        /** @var ResponseInterface $res */
+        $res = $this->sendAuthenticatedRequest('queues/' . $vHost . '/' . $name, 'PUT', $additionConfig, false);
+        if($res->getStatusCode() == Response::HTTP_CREATED || $res->getStatusCode() == Response::HTTP_NO_CONTENT) {
             return true;
         }
 
         return false;
     }
 
+    /**
+     * @param Queue $queue
+     *
+     * @return bool
+     * @throws GuzzleException
+     */
     public function deleteQueue(Queue $queue) {
         $res = $this->sendAuthenticatedRequest('queues/' . $queue->getVhost() . '/' . $queue->getName(), 'DELETE', [], false);
-        if($res->getStatusCode() == 201 || $res->getStatusCode() == 204) {
+        if($res->getStatusCode() == Response::HTTP_CREATED || $res->getStatusCode() == Response::HTTP_NO_CONTENT) {
             return true;
         }
-    }
 
+        return false;
+    }
 }
