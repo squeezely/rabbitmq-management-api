@@ -51,6 +51,28 @@ foreach($vhostService->getVhosts() as $vhost) {
         $vhost->getData()
     );
 }
+$queueService = new QueueService($config);
+$queue = $queueService->getQueue('my_awesome_queue', 'development');
+var_dump($queue->getName());
+
+$queues = $queueService->getQueues('development');
+foreach($queues as $queue) {
+    var_dump($queue->getName());
+}
+
+$queueToDelete = $queueService->getQueue('queue_i_dont_like', 'development');
+$queueService->deleteQueue($queueToDelete);
+
+$queueService->createQueue(
+    'queue_i_like',
+    'development',
+    [
+        'passive' => false,
+        'durable' => true,
+        'exclusive' => false,
+        'auto_delete' => false,
+    ]
+);
 
 $clusterService = new ClusterService($config);
 var_dump(
