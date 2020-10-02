@@ -21,13 +21,13 @@ class QueueService extends Client {
      */
     public function getQueue(string $name, string $vhost) {
         try {
-            $vhostGeneralData = $this->sendAuthenticatedRequest('queues/' . $vhost . '/' . $name);
+            $queueGeneralData = $this->sendAuthenticatedRequest('queues/' . $vhost . '/' . $name);
         } catch(GuzzleException $e) {
             return false;
         }
 
-        if(isset($vhostGeneralData['name']) && $vhostGeneralData['name'] == $name) {
-            return new Queue($vhostGeneralData);
+        if(isset($queueGeneralData['name']) && $queueGeneralData['name'] == $name) {
+            return new Queue($queueGeneralData);
         }
 
         return false;
@@ -38,7 +38,7 @@ class QueueService extends Client {
      * @return Queue[]
      * @throws GuzzleException
      */
-    public function getQueues(string $vhost = null) {
+    public function getQueues(?string $vhost = null) {
         if($vhost !== null) {
             $context = 'queues/' . $vhost;
         }
@@ -48,9 +48,7 @@ class QueueService extends Client {
 
         $queues = [];
         foreach($this->sendAuthenticatedRequest($context) as $queue) {
-            if(!isset($this->queues[$queue['vhost']])) {
-                $queues[] = new Queue($queue);
-            }
+            $queues[] = new Queue($queue);
         }
 
         return $queues;
