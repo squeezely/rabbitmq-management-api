@@ -44,4 +44,20 @@ class ClusterService extends Client {
     public function getNodes() {
         return $this->sendAuthenticatedRequest('nodes');
     }
+
+    /**
+     * @param string $name
+     *
+     * @param bool   $memory
+     * @param bool   $binary
+     *
+     * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function getNode(string $name, bool $memory = false, bool $binary = false) {
+        $params = [];
+        if($memory) $params[] = 'memory=true';
+        if($binary) $params[] = 'binary=true';
+        return $this->sendAuthenticatedRequest('nodes/' . $name . ($params ? '?' . implode('&', $params) : ''));
+    }
 }
