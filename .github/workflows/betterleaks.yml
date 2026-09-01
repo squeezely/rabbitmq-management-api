@@ -1,0 +1,52 @@
+name: Betterleaks secret scan
+
+# Uses the betterleaks CLI directly rather than an action, since gitleaks-action
+# requires a paid license for private repositories. The CLI is free regardless.
+# Betterleaks is a gitleaks successor maintained by the same team: https://github.com/betterleaks/betterleaks
+on:
+    pull_request:
+    push:
+        branches:
+            - master
+    workflow_dispatch:
+        inputs:
+            fullHistory:
+                description: 'Scan the full git history instead of just new commits'
+                default: false
+                type: boolean
+
+permissions:
+    contents: read
+
+env:
+    BETTERLEAKS_VERSION: 1.8.1
+
+jobs:
+    betterleaks:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            - name: Install betterleaks
+              run: |
+                  curl -sSL -o betterleaks.tar.gz "https://github.com/betterleaks/betterleaks/releases/download/v${BETTERLEAKS_VERSION}/betterleaks_${BETTERLEAKS_VERSION}_linux_x64.tar.gz"
+                  tar -xzf betterleaks.tar.gz betterleaks
+                  chmod +x betterleaks
+
+            - name: Full history scan
+              if: ${{ github.event_name == 'workflow_dispatch' && inputs.fullHistory }}
+              run: ./betterleaks git . --redact --verbose
+
+            - name: Scan PR commits for secrets
+              if: ${{ github.event_name == 'pull_request' }}
+              run: ./betterleaks git . --log-opts="${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}" --redact --verbose
+
+            - name: Scan pushed commits for secrets
+              if: ${{ github.event_name == 'push' }}
+              run: ./betterleaks git . --log-opts="${{ github.event.before }}..${{ github.event.after }}" --redact --verbose
+
+            - name: Manual run, incremental
+              if: ${{ github.event_name == 'workflow_dispatch' && !inputs.fullHistory }}
+              run: ./betterleaks git . --log-opts="-20" --redact --verbose
