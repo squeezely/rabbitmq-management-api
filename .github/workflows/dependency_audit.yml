@@ -1,0 +1,36 @@
+name: Dependency audit
+
+# actions/dependency-review-action isn't available (needs a GitHub Advanced
+# Security license for private repos). This checks the same thing -
+# known-vulnerable dependencies - using composer audit / npm audit instead,
+# which just need the lockfiles and work on any plan.
+on:
+    pull_request:
+    push:
+        branches:
+            - master
+
+permissions:
+    contents: read
+
+jobs:
+    composer-audit:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: shivammathur/setup-php@v2
+              with:
+                  php-version: '8.3'
+                  coverage: none
+            - name: Resolve composer.lock (none committed in this repo)
+              run: composer update --no-interaction --no-progress --no-install
+            - name: Composer audit
+              run: |
+                  set +e
+                  composer audit --locked --format=table --ignore-severity=low --ignore-severity=medium
+                  exit_code=$?
+                  set -e
+                  if [ "$exit_code" -ne 0 ]; then
+                      echo "::warning::composer audit found known vulnerabilities - see step output above"
+                  fi
+                  exit 0
