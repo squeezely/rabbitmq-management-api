@@ -50,7 +50,22 @@ jobs:
 
             - name: Scan pushed commits for secrets
               if: ${{ github.event_name == 'push' }}
-              run: ./betterleaks git . --log-opts="${{ github.event.before }}..${{ github.event.after }}" --redact --verbose
+              env:
+                  BEFORE_SHA: ${{ github.event.before }}
+                  AFTER_SHA: ${{ github.event.after }}
+              run: |
+                  # github.event.before is the all-zero SHA when the ref is newly created,
+                  # and can point to a commit our fetch-depth:0 checkout never fetched (it's
+                  # only reachable from the ref, so a force-push can orphan it). Either way
+                  # the range below would error and skip the scan entirely, so fall back to
+                  # scanning full history instead of failing open.
+                  ZERO_SHA="0000000000000000000000000000000000000000"
+                  if [ "$BEFORE_SHA" = "$ZERO_SHA" ] || ! git cat-file -e "${BEFORE_SHA}^{commit}" 2>/dev/null; then
+                      echo "before-SHA is unusable (new branch or force-push) - scanning full history instead"
+                      ./betterleaks git . --redact --verbose
+                  else
+                      ./betterleaks git . --log-opts="${BEFORE_SHA}..${AFTER_SHA}" --redact --verbose
+                  fi
 
             - name: Manual run, incremental
               if: ${{ github.event_name == 'workflow_dispatch' && !inputs.fullHistory }}
